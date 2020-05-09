@@ -56,11 +56,7 @@ class ThirdAccount
             ];
         }
 
-        $sources += (config('admin-oauth.sources') ?: []);
-
-        return \Arr::sort($sources, function ($value, $key) {
-            return array_search($key, config('admin-oauth.enabled_thirds') ?? []);
-        });
+        return $sources;
     }
 
     // 解绑绑定

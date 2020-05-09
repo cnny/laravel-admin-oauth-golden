@@ -23,7 +23,10 @@
         "laravel": {
             "providers": [
                 "Cann\\Admin\\OAuth\\ServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "GoldenAdmin": "Cann\\Admin\\OAuth\\Facades\\GoldenAdmin"
+            }
         }
     }
 }

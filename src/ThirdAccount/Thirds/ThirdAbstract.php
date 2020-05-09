@@ -74,7 +74,7 @@ abstract class ThirdAbstract implements ThirdInterface
 
             $user = $userModel::create([
                 'username' => $username,
-                'password' => \Hash::make('admin'),
+                'password' => \Hash::make(config('admin-oauth.default_password', 'admin')),
                 'name'     => $thirdUser['name'],
             ]);
 

@@ -10,12 +10,10 @@ return [
     // 当第三方登录未匹配到本地账号时，是否允许自动创建本地账号
     'allowed_auto_create_account_by_third' => true,
 
-    // 启用的第三方登录
-    'enabled_thirds' => [
-        'Golden',
-    ],
+    // 默认密码
+    'default_password' => 'admin',
 
-    // 第三方登录秘钥
+    // 秘钥
     'services' => [
         'golden' => [
             'client_id'     => env('GOLDEN_CLIENT_ID'),

@@ -10,8 +10,8 @@
 ### 依赖
 ------------
  - laravel-admin >= 1.7
- 
- 
+
+
 ### 安装
 ------------
 ```
@@ -42,48 +42,5 @@ path: `config/admin-oauth.php`
     // 当第三方登录未匹配到本地账号时，是否允许自动创建本地账号
     'allowed_auto_create_account_by_third' => false,
 
-    // 启用的第三方登录
-    'enabled_thirds' => [
-        'Golden',
-    ],
-
-    // 第三方登录秘钥
-    'services' => [
-        'golden' => [
-            'client_id'  => env('GOLDEN_CLIENT_ID', ''),
-            'client_secret' => env('GOLDEN_CLIENT_SECRET', ''),
-        ]
-    ]
 ```
 
-### 扩展授权方
-
-继承 `Cann\Admin\OAuth\ThirdAccount\Thirds\ThirdAbstract`, 实现 `getAuthorizeUrl` & `getThirdUser`。 然后在 `AppServerProvider` 中注册：
-
-```
-    \Cann\Admin\OAuth\ServiceProvider::extend(\App\Extensions\OAuth\WechatMp::class, 'WechatMp', '微信公众号');
-```
-
-修改 `config/admin-oauth.php` 即可:
-
-```
-    // 启用的第三方登录
-    'enabled_thirds' => [
-        'WechatMp',
-        'WorkWechat',
-    ],
-
-    // 第三方登录秘钥
-    'services' => [
-        'golden' => [
-            'client_id'  => env('GOLDEN_CLIENT_ID', ''),
-            'client_secret' => env('GOLDEN_CLIENT_SECRET', ''),
-        ]
-        'wechat_mp' => [
-            'app_id'  => env('WECHAT_OFFICIAL_ACCOUNT_APPID', ''),   // AppID
-            'secret'  => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', ''),   // AppSecret
-            'token'   => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', ''),    // Token
-            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', ''),  // EncodingAESKey
-        ],
-    ],
-```
