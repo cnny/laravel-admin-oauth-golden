@@ -29,6 +29,10 @@ php artisan vendor:publish --provider="Cann\Admin\OAuth\ServiceProvider"
 php artisan migrate
 ```
 
+### 加载路由
+
+app\Admin\routes.php 中 用`GoldenAdmin::routes()` 替换 laravel-admin 默认的 `Admin::routes()`
+
 ### 配置
 
 path: `config/admin-oauth.php`
@@ -42,5 +46,15 @@ path: `config/admin-oauth.php`
     // 当第三方登录未匹配到本地账号时，是否允许自动创建本地账号
     'allowed_auto_create_account_by_third' => false,
 
+    // 默认密码
+    'default_password' => '',
+    
+    // 秘钥
+    'services' => [
+        'golden' => [
+            'client_id'     => env('GOLDEN_CLIENT_ID'),
+            'client_secret' => env('GOLDEN_CLIENT_SECRET'),
+        ],
+    ],
 ```
 
