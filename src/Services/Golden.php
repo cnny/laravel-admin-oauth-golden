@@ -6,7 +6,7 @@ use Cann\Admin\OAuth\Helpers\ApiHelper;
 
 class Golden
 {
-    const BASE_URL = 'http://local-api-authorize.wetax.com.cn/api';
+    const BASE_URL = 'https://api-authorize.wetax.com.cn/api';
 
     // 获取用户列表
     public static function getUserList(int $page = 1, int $pageSize = 20)
