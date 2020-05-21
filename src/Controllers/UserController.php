@@ -139,19 +139,19 @@ class UserController extends BaseUserController
     {
         $page     = 1;
         $pageSize = 2000;
-        $users    = [];
+        $return    = [];
 
         while (true) {
 
-            $result = Golden::getUserList($page, $pageSize);
+            $users = Golden::getUserList($page, $pageSize);
 
-            $users += \Arr::pluck($result['users'], 'name', 'id');
+            $return = array_merge($return, \Arr::pluck($users, 'name', 'id'));
 
-            if (count($result['users']) < $pageSize) {
+            if (count($users) < $pageSize) {
                 break;
             }
         }
 
-        return $users;
+        return $return;
     }
 }

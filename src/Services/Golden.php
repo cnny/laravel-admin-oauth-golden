@@ -2,32 +2,29 @@
 
 namespace Cann\Admin\OAuth\Services;
 
+use Cache;
 use Cann\Admin\OAuth\Helpers\ApiHelper;
 
 class Golden
 {
-    const BASE_URL = 'https://api-authorize.wetax.com.cn/api';
+    const BASE_URL = 'https://sh-passport.wetax.com.cn';
 
     // 获取用户列表
     public static function getUserList(int $page = 1, int $pageSize = 20)
     {
-        return self::call('/users', 'GET', [
+        $result = self::call('/api/users', 'GET', [
             'page'      => $page,
             'page_size' => $pageSize,
         ]);
+
+        return $result['users']['data'];
     }
 
     protected static function call(string $uri, string $method = 'GET', array $params = [])
     {
-        $params += [
-            'client_id' => config('admin-oauth.services.golden.client_id'),
-            'nonce_str' => \Str::random(16),
-            'timestamp' => time(),
-        ];
-
-        $params['sign'] = self::buildSign($params);
-
-        $result = ApiHelper::guzHttpRequest(self::BASE_URL . $uri, $params, $method);
+        $result = ApiHelper::guzHttpRequest(self::BASE_URL . $uri, $params, $method, null, [
+            'Authorization' => 'Bearer ' . self::getAccessToken(),
+        ]);
 
         if ($result['code'] != 0) {
             throw new \Exception('Godel Error：' . $result['message']);
@@ -36,34 +33,22 @@ class Golden
         return $result['data'];
     }
 
-    // 对数组里的键进行从a到z的顺序排序，若遇到相同字母，则看第二个字母，以此类推
-    // 排序完成后，再把所有键值对用“&”字符连接起来
-    // 参数值为“空”不参与排序
-    public static function buildSign(array $params)
+    protected static function getAccessToken()
     {
-        // 键名升序
-        ksort($params);
+        $cacheKey = 'GoldenPassportCenter:Client:AccessToken';
 
-        $strs = [];
-
-        foreach ($params as $key => $value) {
-
-            // 参数值为空不参与加密、签名
-            if (! $value) {
-                continue;
-            }
-
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
-            $strs[] = $key . '=' . $value;
+        if ($accessToken = Cache::get($cacheKey)) {
+            return $accessToken;
         }
 
-        // 拼接待签名字符串
-        $paramStr = implode('&', $strs);
+        $result =  ApiHelper::guzHttpRequest(self::BASE_URL . '/oauth/token', [
+            'grant_type'    => 'client_credentials',
+            'client_id'     => config('admin-oauth.services.golden.client_id'),
+            'client_secret' => config('admin-oauth.services.golden.client_secret'),
+        ], 'POST');
 
-        // 返回最终签名
-        return md5(strtolower($paramStr . '&app_secret=' . config('admin-oauth.services.golden.client_secret')));
+        Cache::put($cacheKey, $result['access_token'], $result['expires_in']);
+
+        return $result['access_token'];
     }
 }

@@ -6,7 +6,7 @@ use Cann\Admin\OAuth\Helpers\ApiHelper;
 
 class Golden extends ThirdAbstract
 {
-    const BASE_URL = 'https://api-authorize.wetax.com.cn';
+    const BASE_URL = 'https://sh-passport.wetax.com.cn';
 
     public function getAuthorizeUrl(array $params)
     {
