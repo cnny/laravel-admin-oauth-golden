@@ -1,7 +1,7 @@
 <p align="center">Laravel-Admin-OAuth-Golden</p>
 
 <p align="center">
-  laravel-admin-oauth-Golden 是 <a href="https://laravel-admin.org/">laravel-admin</a> 的 OAuth2.0 登录扩展， 仅支持高灯授权中心OAuth登录，支持扩展其他授权方
+  laravel-admin-oauth-Golden 是 <a href="https://laravel-admin.org/">laravel-admin</a> 的 OAuth2.0 登录扩展， 仅支持高灯授权中心OAuth登录
   <img src="https://blog-1252314417.cos.ap-shanghai.myqcloud.com/1588825967295.jpg">
   <img src="https://blog-1252314417.cos.ap-shanghai.myqcloud.com/1588826006635.jpg">
 </p>
