@@ -55,14 +55,14 @@ class Golden extends ThirdAbstract
 
     private function getUserInfo(array $params)
     {
-        $result = ApiHelper::guzHttpRequest(self::BASE_URL . '/api/user', [], 'GET', null, [
+        $user = ApiHelper::guzHttpRequest(self::BASE_URL . '/api/user', [], 'GET', null, [
             'Authorization' => 'Bearer ' . $params['access_token'],
         ]);
 
-        if ($result['code'] != 0) {
-            throw new \Exception('Golden：获取用户信息失败：' . $result['message']);
+        if (isset($user['code']) && $user['code'] != 0) {
+            throw new \Exception('Golden：获取用户信息失败：' . $user['message']);
         }
 
-        return $result['data']['user'];
+        return $user;
     }
 }
