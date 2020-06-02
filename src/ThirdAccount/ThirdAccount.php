@@ -14,7 +14,7 @@ class ThirdAccount
 {
     // 所有第三方平台
     const PLATFORMS = [
-        'Golden',
+        'GoldenPassport',
     ];
 
     /**
@@ -23,7 +23,7 @@ class ThirdAccount
      * @var array
      */
     const SOURCES = [
-        'Golden' => '高灯',
+        'GoldenPassport' => '高灯创新-通行证',
     ];
 
     /**
@@ -52,31 +52,10 @@ class ThirdAccount
             $sources[$source] = [
                 'source'     => $source,
                 'sourceName' => $sourceName,
-                'class'      => __NAMESPACE__ . '\\Thirds\\' . str_replace('_', '\\', $source),
+                'class'      => __NAMESPACE__ . '\\Thirds\\' . $source,
             ];
         }
 
         return $sources;
-    }
-
-    // 解绑绑定
-    public static function unbind($user, string $platform)
-    {
-        if (! in_array($platform, self::PLATFORMS)) {
-            throw new \Exception('Invalid 3rdAccountPlatform');
-        }
-
-        AdminUserThirdPfBind::where([
-            'platform'  => $platform,
-            'uid'       => $user->id,
-        ])->delete();
-    }
-
-    // 解绑所有第三方绑定
-    public static function unbindAll($user)
-    {
-        AdminUserThirdPfBind::where([
-            'uid' => $user->id,
-        ])->delete();
     }
 }

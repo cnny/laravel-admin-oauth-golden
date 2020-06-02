@@ -28,9 +28,11 @@ class ServiceProvider extends BaseServiceProvider
     protected function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__.'/../config' => config_path()], 'laravel-admin-oauth');
-            $this->publishes([__DIR__ . '/../database/migrations' => database_path('migrations')], 'laravel-admin-oauth');
-            $this->publishes([__DIR__ . '/../resources/assets' => public_path('vendor/laravel-admin-oauth')], 'laravel-admin-oauth');
+            $this->publishes([
+                __DIR__.'/../config' => config_path(),
+                __DIR__ . '/../database/migrations' => database_path('migrations'),
+                __DIR__ . '/../resources/assets' => public_path('vendor/laravel-admin-oauth'),
+            ], 'laravel-admin-oauth');
         }
     }
 }

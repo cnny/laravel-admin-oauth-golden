@@ -2,13 +2,12 @@
 
 namespace Cann\Admin\OAuth\Controllers;
 
-use Redirect;
 use Illuminate\Http\Request;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AuthController as BaseAuthController;
 use Cann\Admin\OAuth\ThirdAccount\ThirdAccount;
 
-class AuthController extends BaseAuthController
+class ThirdAccountController extends BaseAuthController
 {
     public function getLogin()
     {
@@ -21,7 +20,7 @@ class AuthController extends BaseAuthController
         return view('oauth::login', compact('sources'));
     }
 
-    public function toAuthorize(Request $request)
+    public function goToAuthorize(Request $request)
     {
         $request->validate([
             'source' => 'required|string|in:' . implode(',', array_keys(ThirdAccount::SOURCES)),
@@ -29,7 +28,9 @@ class AuthController extends BaseAuthController
 
         $thirdService = ThirdAccount::factory($request->source);
 
-        $authorizeUrl = $thirdService->getAuthorizeUrl($request->all());
+        $authorizeUrl = $thirdService
+            ->setRedirectUrl(admin_url('/oauth/callback?source=' . $request->source))
+            ->getAuthorizeUrl($request->all());
 
         return redirect($authorizeUrl);
     }
@@ -75,7 +76,7 @@ class AuthController extends BaseAuthController
             throw new \Exception('Not Found Third User Info');
         }
 
-        if ($request->isMethod('get')) {
+        if ($request->isMethod('GET')) {
             return view('oauth::bind-account', [
                 'sourceName' => ThirdAccount::sources()[$thirdUser['source']]['sourceName'],
             ]);
@@ -83,24 +84,20 @@ class AuthController extends BaseAuthController
 
         else {
 
-            $credentials = $request->only(['username', 'password']);
-
-            $validator = \Validator::make($credentials, [
+            $request->validate([
                 'username' => 'required',
                 'password' => 'required',
             ]);
 
-            if ($validator->fails()) {
-                return Redirect::back()->withInput()->withErrors($validator);
-            }
+            $credentials = $request->only(['username', 'password']);
 
             if (! Admin::guard()->validate($credentials)) {
-                return Redirect::back()->withInput()->withErrors(['username' => '绑定失败，请检查账号或密码']);
+                return redirect()->withInput()->withErrors([
+                    'username' => '绑定失败，请检查账号或密码',
+                ]);
             }
 
-            $userModel = config('admin.database.users_model');
-
-            $user = $userModel::where('username', $credentials['username'])->first();
+            $user = Admin::guard()->getLastAttempted();
 
             // 获取第三方工厂实例
             $thirdService = ThirdAccount::factory($thirdUser['source']);

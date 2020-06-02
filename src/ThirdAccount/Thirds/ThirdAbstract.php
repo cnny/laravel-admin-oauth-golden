@@ -9,31 +9,17 @@ use Cann\Admin\OAuth\Models\AdminUserThirdPfBind;
  */
 abstract class ThirdAbstract implements ThirdInterface
 {
-    /**
-     * 平台渠道
-     *
-     * @var string
-     */
     protected $source;
-    protected $config;
-
     protected $redirectUrl;
 
     public function __construct(string $source)
     {
         $this->source = $source;
-        $this->config = config('admin-oauth.services.' . \Str::snake($source));
-        $this->setRedirectUrl(admin_url('/oauth/callback?source=' . $source));
     }
 
     public function getPlatform()
     {
         return $this->source;
-    }
-
-    public function getPlatformChn()
-    {
-        return $this->getPlatform();
     }
 
     public function getAuthorizeUrl(array $params)
@@ -48,37 +34,31 @@ abstract class ThirdAbstract implements ThirdInterface
         return $this;
     }
 
-    public function decryptUserMobile(array $params)
-    {
-        return '';
-    }
-
     public function getUserByThird(array $thirdUser)
     {
         if (! isset($thirdUser['id']) || ! $thirdUser['id']) {
-            throw new \Exception('Not Found Third Id');
+            throw new \Exception('Invalid ThirdId');
         }
 
         $user = AdminUserThirdPfBind::getUserByThird($this->getPlatform(), $thirdUser['id']);
 
         // 根据第三方账号创建本地账号
-        if (! $user && config('admin-oauth.allowed_auto_create_account_by_third')) {
+        if (! $user && config('admin-oauth.allowed_auto_create_account')) {
 
             $userModel = config('admin.database.users_model');
             $username  = $thirdUser['name'];
 
-            // username 已存在
+            // 用户名已存在
             if ($userModel::where('username', $thirdUser['name'])->first()) {
-                $username = \Str::random(16);
+                $username .= '_' . uniqid();
             }
 
             $user = $userModel::create([
                 'username' => $username,
-                'password' => \Hash::make(config('admin-oauth.default_password', 'admin')),
+                'password' => \Hash::make(uniqid()),
                 'name'     => $thirdUser['name'],
             ]);
 
-            // 建立企业微信和本地账号的绑定关系
             $this->bindUserByThird($user, $thirdUser);
         }
 
@@ -89,7 +69,7 @@ abstract class ThirdAbstract implements ThirdInterface
     public function bindUserByThird($user, array $thirdUser)
     {
         if (! isset($thirdUser['id']) || ! $thirdUser['id']) {
-            throw new \Exception('Invalid Third Id');
+            throw new \Exception('Invalid ThirdId');
         }
 
         $thirdUid = $thirdUser['id'];
