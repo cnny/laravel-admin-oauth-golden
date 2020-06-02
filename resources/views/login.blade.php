@@ -21,7 +21,7 @@
     <![endif]-->
 </head>
 
-<body class="hold-transition login-page" style="height: 100vh; display: flex; align-items: center; background: url({{config('admin.login_background_image') ?: '/vendor/laravel-admin-oauth/img/background.jpg'}}) no-repeat;background-size: cover;">
+<body class="hold-transition login-page" @if(config('admin.login_background_image'))style="background: url({{config('admin.login_background_image')}}) no-repeat;background-size: cover;"@endif>
 
     <div class="login-box" id="login-box-oauth" style="min-width: 260px; width: auto; opacity: 0.8; display: {{ config('admin-oauth.allowed_password_login') ? 'none' : 'block' }}">
 
