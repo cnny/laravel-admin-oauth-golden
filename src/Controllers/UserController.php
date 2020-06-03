@@ -3,155 +3,99 @@
 namespace Cann\Admin\OAuth\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\MessageBag;
-use Cann\Admin\OAuth\ThirdAccount\ThirdAccount;
-use Cann\Admin\OAuth\Services\Golden;
+use Cann\Admin\OAuth\Services\GoldenPassport;
 use Cann\Admin\OAuth\Models\AdminUserThirdPfBind;
 use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Grid\Tools;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Grid\Displayers\Actions;
-use Encore\Admin\Grid\Tools\BatchActions;
-use Encore\Admin\Controllers\AuthController as BaseAuthController;
 use Encore\Admin\Controllers\UserController as BaseUserController;
 
 class UserController extends BaseUserController
 {
-    protected function grid()
-    {
-        $userModel = config('admin.database.users_model');
-
-        $grid = new Grid(new $userModel());
-
-        $grid->column('id', 'ID')->sortable();
-        $grid->column('name', trans('admin.name'));
-        $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
-        $grid->column('created_at', trans('admin.created_at'));
-        $grid->column('updated_at', trans('admin.updated_at'));
-
-        $grid->actions(function (Actions $actions) {
-            if ($actions->getKey() == 1) {
-                $actions->disableDelete();
-            }
-        });
-
-        $grid->tools(function (Tools $tools) {
-            $tools->batch(function (BatchActions $actions) {
-                $actions->disableDelete();
-            });
-        });
-
-        return $grid;
-    }
-
     public function form()
     {
-        $userModel = config('admin.database.users_model');
+        $userModel       = config('admin.database.users_model');
         $permissionModel = config('admin.database.permissions_model');
-        $roleModel = config('admin.database.roles_model');
+        $roleModel       = config('admin.database.roles_model');
 
         $form = new Form(new $userModel());
 
-        $userTable = config('admin.database.users_table');
-        $connection = config('admin.database.connection');
-
         $form->display('id', 'ID');
 
-        $goldenUsers = self::buildGoldenUserOptions();
+        $goldenUsers = self::fetchGoldenPassportUids();
 
         if ($form->isCreating()) {
-            $form->select('golden_uid', '高灯账号')->options($goldenUsers)->rules('required');
+            $form->select('golden_uid', '高灯账号')
+                ->options($goldenUsers->pluck('name', 'id'))
+                ->rules('required');
         }
-
         else {
             $form->display('name', trans('admin.name'));
         }
 
-        $form->image('avatar', trans('admin.avatar'));
+        $form->multipleSelect('roles', trans('admin.roles'))
+            ->options($roleModel::all()->pluck('name', 'id'));
 
-        // $form->text('username', trans('admin.username'))
-        //     ->creationRules(['required', "unique:{$connection}.{$userTable}"])
-        //     ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
-
-        // $form->password('password', trans('admin.password'))->rules('required|confirmed');
-        // $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
-        //     ->default(function ($form) {
-        //         return $form->model()->password;
-        //     });
-
-        // $form->ignore(['password_confirmation']);
-
-
-        $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
-        $form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
+        $form->multipleSelect('permissions', trans('admin.permissions'))
+            ->options($permissionModel::all()->pluck('name', 'id'));
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));
 
+        $form->hidden('name');
         $form->hidden('username');
+        $form->hidden('avatar');
         $form->hidden('password');
+
         $form->ignore(['golden_uid']);
 
-        $form->saving(function (Form $form) use($goldenUsers) {
-
-            if (! $form->password || ($form->password && $form->model()->password != $form->password)) {
-                $form->password = bcrypt(config('admin-oauth.default_password', 'admin'));
-            }
-
-            $goldenUid = request()->golden_uid;
-
-            if (! $form->model()->id) {
-
-                $bind = AdminUserThirdPfBind::where([
-                    'platform'      => 'Golden',
-                    'third_user_id' => $goldenUid,
-                ])->first();
-
-                if ($bind && $bind->user) {
-                    return back()->withInput()->withErrors(new MessageBag([
-                        'golden_uid' => '该账号已存在',
-                    ]));
-                }
-
-                $form->username = \Str::random(16);
-                $form->name = $goldenUsers[$goldenUid];
-            }
+        $form->saving(function (Form $form) use ($goldenUsers) {
+            $goldenUid = request('golden_uid');
+            $form->name     = $goldenUsers[$goldenUid]['name'];
+            $form->username = $goldenUsers[$goldenUid]['username'];
+            $form->avatar   = $goldenUsers[$goldenUid]['avatar_url'];
+            $form->password = '';
         });
 
-        $form->saved(function (Form $form) use($goldenUsers) {
+        $form->saved(function (Form $form) {
 
-            $goldenUid = request()->golden_uid;
-
-            // Golden账号和本地账号创建绑定关系
-            AdminUserThirdPfBind::updateOrCreate([
-                'platform'      => 'Golden',
-                'third_user_id' => $goldenUid,
-            ], [
-                'user_id' => $form->model()->id,
+            // 创建绑定关系
+            AdminUserThirdPfBind::create([
+                'user_id'       => $form->model()->id,
+                'platform'      => 'GoldenPassport',
+                'third_user_id' => request('golden_uid'),
             ]);
+
         });
 
         return $form;
     }
 
-    protected static function buildGoldenUserOptions()
+    protected static function fetchGoldenPassportUids()
     {
         $page     = 1;
         $pageSize = 2000;
-        $return    = [];
+
+        $goldenUsers = [];
 
         while (true) {
 
-            $users = Golden::getUserList($page, $pageSize);
+            $users = GoldenPassport::getUserList($page, $pageSize);
 
-            $return = array_merge($return, \Arr::pluck($users, 'name', 'id'));
+            $goldenUsers = array_merge($goldenUsers, $users);
 
             if (count($users) < $pageSize) {
                 break;
             }
         }
 
-        return $return;
+        $goldenUsers = collect($goldenUsers)->keyBy('id');
+
+        $bindedThirdUids = AdminUserThirdPfBind::getBindedUids('GoldenPassport');
+
+        // 去除已绑定的第三方账号
+        foreach ($bindedThirdUids as $thirdUid) {
+            unset($goldenUsers[$thirdUid]);
+        }
+
+        return $goldenUsers;
     }
 }

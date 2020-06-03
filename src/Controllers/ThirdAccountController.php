@@ -2,34 +2,44 @@
 
 namespace Cann\Admin\OAuth\Controllers;
 
-use Redirect;
 use Illuminate\Http\Request;
 use Encore\Admin\Facades\Admin;
-use Encore\Admin\Controllers\AuthController as BaseAuthController;
+use Encore\Admin\Controllers\AuthController;
 use Cann\Admin\OAuth\ThirdAccount\ThirdAccount;
 
-class AuthController extends BaseAuthController
+class ThirdAccountController extends AuthController
 {
     public function getLogin()
     {
+        // 已登录的用户无需访问登录页
         if ($this->guard()->check()) {
             return redirect($this->redirectPath());
         }
 
-        $sources = \Arr::pluck(ThirdAccount::sources(), 'sourceName', 'source');
+        // 强行用密码登录
+        if (request('pwd_login')) {
+            return parent::getLogin();
+        }
 
-        return view('oauth::login', compact('sources'));
+        return redirect(admin_url('/oauth/authorize?source=GoldenPassport'));
     }
 
-    public function toAuthorize(Request $request)
+    public function getLogout(Request $request)
+    {
+        parent::getLogout($request);
+
+        return redirect('https://sh-passport.wetax.com.cn/logout');
+    }
+
+    public function goToAuthorize(Request $request)
     {
         $request->validate([
             'source' => 'required|string|in:' . implode(',', array_keys(ThirdAccount::SOURCES)),
         ]);
 
-        $thirdService = ThirdAccount::factory($request->source);
+        $service = ThirdAccount::factory($request->source);
 
-        $authorizeUrl = $thirdService->getAuthorizeUrl($request->all());
+        $authorizeUrl = $service->getAuthorizeUrl($request->all());
 
         return redirect($authorizeUrl);
     }
@@ -42,24 +52,33 @@ class AuthController extends BaseAuthController
         ]);
 
         // 获取第三方工厂实例
-        $thirdService = ThirdAccount::factory($posts['source']);
+        $service = ThirdAccount::factory($posts['source']);
 
         // 获取第三方用户信息
-        $thirdUser = $thirdService->getThirdUser($request->all());
+        $thirdUser = $service->getThirdUser($request->all());
 
         // 根据第三方用户信息获取我方用户信息
-        $user = $thirdService->getUserByThird($thirdUser);
+        $user = $service->getUserByThird($thirdUser);
 
         // 如果社交账号未绑定我方账号，则前端引导前往绑定
         if (! $user) {
 
             // 临时存储第三方用户信息
-            $request->session()->put('Admin-OAuth-ThirdUser', [
+            $request->session()->put('AdminOAuthThirdUser', [
                 'source'    => $request->source,
                 'user_info' => $thirdUser,
             ]);
 
             return redirect()->guest(admin_url('oauth/bind-account'));
+        }
+
+        else{
+
+            // 同步更新用户信息
+            $user->update([
+                'name'     => $thirdUser['full_info']['name'],
+                'avatar'   => $thirdUser['full_info']['avatar_url'] ?? '',
+            ]);
         }
 
         Admin::guard()->login($user);
@@ -71,42 +90,38 @@ class AuthController extends BaseAuthController
 
     public function bindAccount(Request $request)
     {
-        if (! $thirdUser = $request->session()->get('Admin-OAuth-ThirdUser')) {
+        if (! $thirdUser = $request->session()->get('AdminOAuthThirdUser')) {
             throw new \Exception('Not Found Third User Info');
         }
 
-        if ($request->isMethod('get')) {
-            return view('oauth::bind-account', [
+        if ($request->isMethod('GET')) {
+            return view('admin-oauth::bind-account', [
                 'sourceName' => ThirdAccount::sources()[$thirdUser['source']]['sourceName'],
             ]);
         }
 
         else {
 
-            $credentials = $request->only(['username', 'password']);
-
-            $validator = \Validator::make($credentials, [
+            $request->validate([
                 'username' => 'required',
                 'password' => 'required',
             ]);
 
-            if ($validator->fails()) {
-                return Redirect::back()->withInput()->withErrors($validator);
-            }
+            $credentials = $request->only(['username', 'password']);
 
             if (! Admin::guard()->validate($credentials)) {
-                return Redirect::back()->withInput()->withErrors(['username' => '绑定失败，请检查账号或密码']);
+                return back()->withInput()->withErrors([
+                    'username' => '账号或密码不正确',
+                ]);
             }
 
-            $userModel = config('admin.database.users_model');
-
-            $user = $userModel::where('username', $credentials['username'])->first();
+            $user = Admin::guard()->getLastAttempted();
 
             // 获取第三方工厂实例
-            $thirdService = ThirdAccount::factory($thirdUser['source']);
+            $service = ThirdAccount::factory($thirdUser['source']);
 
             // 创建绑定关系
-            $thirdService->bindUserByThird($user, $thirdUser['user_info']);
+            $service->bindUserByThird($user, $thirdUser['user_info']);
 
             Admin::guard()->login($user);
 
