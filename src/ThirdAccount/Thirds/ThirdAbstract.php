@@ -27,6 +27,15 @@ abstract class ThirdAbstract implements ThirdInterface
         return '';
     }
 
+    public function getRedirectUrl()
+    {
+        if (! $this->redirectUrl) {
+            $this->redirectUrl = admin_url('/oauth/callback?source=' . $this->source);
+        }
+
+        return $this->redirectUrl;
+    }
+
     public function setRedirectUrl(string $url)
     {
         $this->redirectUrl = $url;
@@ -42,21 +51,18 @@ abstract class ThirdAbstract implements ThirdInterface
 
         $user = AdminUserThirdPfBind::getUserByThird($this->getPlatform(), $thirdUser['id']);
 
+
         // 根据第三方账号创建本地账号
         if (! $user && config('admin-oauth.allowed_auto_create_account')) {
 
             $userModel = config('admin.database.users_model');
-            $username  = $thirdUser['name'];
 
-            // 用户名已存在
-            if ($userModel::where('username', $thirdUser['name'])->first()) {
-                $username .= '_' . uniqid();
-            }
-
-            $user = $userModel::create([
-                'username' => $username,
-                'password' => \Hash::make(uniqid()),
-                'name'     => $thirdUser['name'],
+            $user = $userModel::firstOrCreate([
+                'username' => $thirdUser['full_info']['username'],
+            ], [
+                'name'     => $thirdUser['full_info']['name'],
+                'avatar'   => $thirdUser['full_info']['avatar_url'] ?? '',
+                'password' => '',
             ]);
 
             $this->bindUserByThird($user, $thirdUser);
@@ -119,6 +125,12 @@ abstract class ThirdAbstract implements ThirdInterface
             'user_id'       => $user->id,
             'platform'      => $platform,
             'third_user_id' => $thirdUid,
+        ]);
+
+        // 同步更新用户信息
+        $user->update([
+            'name'     => $thirdUser['full_info']['name'],
+            'avatar'   => $thirdUser['full_info']['avatar_url'] ?? '',
         ]);
 
         return true;

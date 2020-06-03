@@ -14,7 +14,7 @@ class GoldenPassport extends ThirdAbstract
 
         $paramsStr = http_build_query([
             'client_id'     => $config['client_id'],
-            'redirect_uri'  => $this->redirectUrl,
+            'redirect_uri'  => $this->getRedirectUrl(),
             'response_type' => 'code',
             'scope'         => '',
             'state'         => \Str::random(16),
@@ -49,7 +49,7 @@ class GoldenPassport extends ThirdAbstract
             'grant_type'    => 'authorization_code',
             'client_id'     => $config['client_id'],
             'client_secret' => $config['client_secret'],
-            'redirect_uri'  => $this->redirectUrl,
+            'redirect_uri'  => $this->getRedirectUrl(),
             'code'          => $code,
         ]);
 

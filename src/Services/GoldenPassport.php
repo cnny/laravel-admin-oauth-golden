@@ -40,10 +40,12 @@ class GoldenPassport
             return $accessToken;
         }
 
+        $config = config('admin-oauth.services.golden_passport');
+
         $result = ApiHelper::guzHttpRequest(self::BASE_URL . '/oauth/token', [
             'grant_type'    => 'client_credentials',
-            'client_id'     => config('admin-oauth.services.golden.client_id'),
-            'client_secret' => config('admin-oauth.services.golden.client_secret'),
+            'client_id'     => $config['client_id'],
+            'client_secret' => $config['client_secret'],
         ]);
 
         \Cache::put($cacheKey, $result['access_token'], $result['expires_in']);

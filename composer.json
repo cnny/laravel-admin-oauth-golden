@@ -1,6 +1,6 @@
 {
     "name": "cann/laravel-admin-oauth-golden",
-    "description": "",
+    "description": "Laravel-Admin 接入「高灯创新」通行证",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -22,11 +22,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Cann\\Admin\\OAuth\\ServiceProvider"
-            ],
-            "aliases": {
-                "GoldenAdmin": "Cann\\Admin\\OAuth\\Facades\\GoldenAdmin"
-            }
+                "Cann\\Admin\\OAuth\\AdminOAuthServiceProvider"
+            ]
         }
     }
 }

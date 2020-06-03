@@ -24,4 +24,9 @@ class AdminUserThirdPfBind extends Model
 
         return $bindRelation ? $bindRelation->user : null;
     }
+
+    public static function getBindedUids(string $platform)
+    {
+        return self::where(['platform' => $platform])->pluck('third_user_id')->toArray();
+    }
 }
