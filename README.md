@@ -9,7 +9,7 @@ composer require cann/laravel-admin-oauth-golden:dev-master
 ### 发布资源
 
 ```
-php artisan vendor:publish --provider="Cann\Admin\OAuth\ServiceProvider"
+php artisan vendor:publish --provider="Cann\Admin\OAuth\AdminOAuthServiceProvider"
 ```
 
 ### 数据库迁移
