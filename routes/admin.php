@@ -2,7 +2,7 @@
 
 use Cann\Admin\OAuth\Controllers\UserController;
 use Cann\Admin\OAuth\Controllers\RoleController;
-use Cann\Admin\OAuth\Controllers\cd ;
+use Cann\Admin\OAuth\Controllers\PermissionController;
 use Cann\Admin\OAuth\Controllers\ThirdAccountController;
 
 Route::resource('auth/users', UserController::class)->names('admin.auth.users');
