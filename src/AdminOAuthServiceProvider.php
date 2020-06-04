@@ -3,6 +3,7 @@
 namespace Cann\Admin\OAuth;
 
 use Illuminate\Support\ServiceProvider;
+use Cann\Admin\OAuth\Commands\SyncBindRelationFromPassport;
 
 class AdminOAuthServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,12 @@ class AdminOAuthServiceProvider extends ServiceProvider
         });
 
         $this->setExceptRoute();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                SyncBindRelationFromPassport::class,
+            ]);
+        }
     }
 
     private static function setExceptRoute()

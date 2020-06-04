@@ -8,8 +8,30 @@ class GoldenPassport
 {
     const BASE_URL = 'https://sh-passport.wetax.com.cn';
 
+    // 所有用户列表
+    public static function allUsers()
+    {
+        $page     = 1;
+        $pageSize = 2000;
+
+        $goldenUsers = [];
+
+        while (true) {
+
+            $users = self::users($page, $pageSize);
+
+            $goldenUsers = array_merge($goldenUsers, $users);
+
+            if (count($users) < $pageSize) {
+                break;
+            }
+        }
+
+        return $users;
+    }
+
     // 获取用户列表
-    public static function getUserList(int $page = 1, int $pageSize = 20)
+    public static function users(int $page = 1, int $pageSize = 20)
     {
         $result = self::request('/api/users', 'GET', [
             'page'      => $page,
