@@ -15,17 +15,24 @@ class AdminUserThirdPfBind extends Model
         return $this->belongsTo(config('admin.database.users_model'), 'user_id');
     }
 
-    public static function getUserByThird(string $platform, string $thirdUid)
+    public static function getBindRelation(string $platform, string $thirdUid)
     {
-        $bindRelation = self::where([
+        $pk = [
             'platform'      => $platform,
             'third_user_id' => $thirdUid,
-        ])->first();
+        ];
+
+        return self::where($pk)->first();
+    }
+
+    public static function getUserByThird(string $platform, string $thirdUid)
+    {
+        $bindRelation = self::getBindRelation($platform, $thirdUid);
 
         return $bindRelation ? $bindRelation->user : null;
     }
 
-    public static function getBindedUids(string $platform)
+    public static function getBindUids(string $platform)
     {
         return self::where(['platform' => $platform])->pluck('third_user_id')->toArray();
     }
