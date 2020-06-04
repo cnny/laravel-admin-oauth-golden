@@ -25,6 +25,16 @@ class AdminUserThirdPfBind extends Model
         return self::where($pk)->first();
     }
 
+    public static function getBindRelationByUid(string $platform, string $uid)
+    {
+        $pk = [
+            'platform' => $platform,
+            'user_id'  => $uid,
+        ];
+
+        return self::where($pk)->first();
+    }
+
     public static function getUserByThird(string $platform, string $thirdUid)
     {
         $bindRelation = self::getBindRelation($platform, $thirdUid);

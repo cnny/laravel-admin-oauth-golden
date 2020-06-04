@@ -28,3 +28,9 @@ ADMIN_GOLDEN_PASSPORT_CLIENT_SECRET=
 ```
 
 更多配置请参考 `config/admin-oauth.php` 文件。
+
+### 同步本地账号与高灯 Passport 的绑定关系
+
+```
+php artisan golden-passport:sync-bind-relation
+```
