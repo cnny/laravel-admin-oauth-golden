@@ -20,7 +20,10 @@ class AdminOAuthServiceProvider extends ServiceProvider
         }
 
         if ($this->app->runningInConsole()) {
+
             $this->publishes([__DIR__.'/../config' => config_path()], 'admin-oauth');
+
+            $this->commands([SyncBindRelationFromPassport::class]);
         }
 
         $this->app->booted(function () {
@@ -29,12 +32,6 @@ class AdminOAuthServiceProvider extends ServiceProvider
         });
 
         $this->setExceptRoute();
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                SyncBindRelationFromPassport::class,
-            ]);
-        }
     }
 
     private static function setExceptRoute()
