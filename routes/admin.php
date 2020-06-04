@@ -1,9 +1,13 @@
 <?php
 
 use Cann\Admin\OAuth\Controllers\UserController;
+use Cann\Admin\OAuth\Controllers\RoleController;
+use Cann\Admin\OAuth\Controllers\cd ;
 use Cann\Admin\OAuth\Controllers\ThirdAccountController;
 
 Route::resource('auth/users', UserController::class)->names('admin.auth.users');
+Route::resource('auth/roles', RoleController::class)->names('admin.auth.roles');
+Route::resource('auth/permissions', PermissionController::class)->names('admin.auth.permissions');
 
 $authController = ThirdAccountController::class;
 
