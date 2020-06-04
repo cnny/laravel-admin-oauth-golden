@@ -18,7 +18,13 @@ class SyncBindRelationFromPassport extends Command
 
     public function handle()
     {
-        $goldenUsers = collect(GoldenPassport::allUsers());
+        $allGoldenUsers = collect(GoldenPassport::allUsers());
+
+        $goldenUsers = [];
+
+        foreach ($allGoldenUsers as $goldenUser) {
+            $goldenUsers[strtolower($goldenUser['username'])] = $goldenUser;
+        }
 
         $userModel = config('admin.database.users_model');
 
@@ -31,7 +37,7 @@ class SyncBindRelationFromPassport extends Command
                     return true;
                 }
 
-                if ($goldenUser = $goldenUsers->where('username', $user->username)->first()) {
+                if ($goldenUser = ($goldenUsers[strtolower($user->username)] ?? [])) {
 
                     // 检测重复绑定
                     if ($bindRelation = AdminUserThirdPfBind::getBindRelation(self::GOLDEN_PLATFORM, $goldenUser['id'])) {
