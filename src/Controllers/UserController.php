@@ -86,7 +86,7 @@ class UserController extends BaseUserController
     // 获取所有高灯员工列表
     protected static function fetchGoldenPassportUids()
     {
-        $users = GoldenPassport::allUsers();
+        $goldenUsers = GoldenPassport::allUsers();
 
         $goldenUsers = collect($goldenUsers)->keyBy('id');
 
