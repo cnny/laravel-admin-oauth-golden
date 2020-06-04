@@ -52,6 +52,12 @@ class SyncBindRelationFromPassport extends Command
                         'third_user_id' => $goldenUser['id'],
                     ]);
 
+                    // 同步更新用户信息
+                    $user->update([
+                        'name'     => $goldenUser['name'],
+                        'avatar'   => $goldenUser['avatar_url'] ?? '',
+                    ]);
+
                     $this->info('本地账号「' . $user->username . '」绑定关系创建成功');
                 }
 
