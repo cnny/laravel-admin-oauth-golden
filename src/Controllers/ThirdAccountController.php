@@ -11,9 +11,16 @@ class ThirdAccountController extends AuthController
 {
     public function getLogin()
     {
-        // 已登录的用户无需访问登录页
+        // 已登录的用户
         if ($this->guard()->check()) {
-            return redirect($this->redirectPath());
+            if (request('reset')) {
+                // 强行退出
+                parent::getLogout(request());
+            }
+            else {
+                // 无需访问登录页
+                return redirect($this->redirectPath());
+            }
         }
 
         // 强行用密码登录
