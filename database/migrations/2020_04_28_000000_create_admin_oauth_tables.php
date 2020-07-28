@@ -28,7 +28,7 @@ class CreateAdminOauthTables extends Migration
 
         DB::table('admin_menu')->where('title', 'Dashboard')->update(['title' => '欢迎回来']);
         DB::table('admin_menu')->where('title', 'Admin')->update(['title' => '技术运维', 'order' => 99]);
-        DB::table('admin_roles')->where('id', 1)->update(['title' => '管理员']);
+        DB::table('admin_roles')->where('id', 1)->update(['name' => '管理员']);
     }
 
     /**

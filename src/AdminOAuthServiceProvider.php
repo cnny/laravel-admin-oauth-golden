@@ -23,7 +23,7 @@ class AdminOAuthServiceProvider extends ServiceProvider
 
             $this->publishes([__DIR__.'/../config' => config_path()], 'admin-oauth');
             $this->publishes([__DIR__.'/../public' => public_path()], 'admin-oauth');
-            $this->publishes([__DIR__.'/../resources/vendor' => resource_path('views')], 'admin-oauth');
+            $this->publishes([__DIR__.'/../resources/views/vendor' => resource_path('views')], 'admin-oauth');
 
             $this->commands([SyncBindRelationFromPassport::class]);
         }
