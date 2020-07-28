@@ -22,6 +22,8 @@ class AdminOAuthServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
 
             $this->publishes([__DIR__.'/../config' => config_path()], 'admin-oauth');
+            $this->publishes([__DIR__.'/../public' => public_path()], 'admin-oauth');
+            $this->publishes([__DIR__.'/../resources/vendor' => resource_path('views')], 'admin-oauth');
 
             $this->commands([SyncBindRelationFromPassport::class]);
         }
@@ -43,5 +45,7 @@ class AdminOAuthServiceProvider extends ServiceProvider
         ]);
 
         config(['admin.auth.excepts' => $exceptRoutes]);
+
+        config(['admin.skin' => 'skin-green']);
     }
 }
