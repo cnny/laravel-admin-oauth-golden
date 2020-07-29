@@ -27,25 +27,11 @@
   <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 
-  <style type="text/css">
-    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:focus, .btn-primary:active:hover {
-      background-color: #a94442;
-      border-color: #a94442;
-      color: #fff;
-      background-color: #a94442;
-      border-color: #a94442;
-    }
-  </style>
-
 </head>
 <body class="hold-transition login-page" @if(config('admin.login_background_image'))style="background: url({{config('admin.login_background_image')}}) no-repeat;background-size: cover;"@endif>
 <div class="login-box">
-  <div class="login-logo">
-    <img src="/img/logo-big@3x.png" style="width:150px;" />
-  </div>
-  <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">{{ trans('admin.login') }}</p>
+    <p class="login-box-msg">{{ config('admin.name') }}</p>
 
     <form action="{{ admin_url('auth/login') }}" method="post">
       <div class="form-group has-feedback {!! !$errors->has('username') ?: 'has-error' !!}">
