@@ -47,5 +47,7 @@ class AdminOAuthServiceProvider extends ServiceProvider
         config(['admin.auth.excepts' => $exceptRoutes]);
 
         config(['admin.skin' => 'skin-green']);
+
+        config(['admin.layout' => ['sidebar-mini']]);
     }
 }
