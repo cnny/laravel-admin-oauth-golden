@@ -33,10 +33,10 @@ class AdminOAuthServiceProvider extends ServiceProvider
             AdminOAuth::routes(__DIR__ . '/../routes/admin.php');
         });
 
-        $this->setExceptRoute();
+        $this->configAdmin();
     }
 
-    private static function setExceptRoute()
+    private function configAdmin()
     {
         $exceptRoutes = array_merge(config('admin.auth.excepts'), [
             'oauth/authorize',
