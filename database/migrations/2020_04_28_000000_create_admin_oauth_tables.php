@@ -26,9 +26,31 @@ class CreateAdminOauthTables extends Migration
 
         });
 
-        DB::table('admin_menu')->where('title', 'Dashboard')->update(['title' => '欢迎', 'icon' => 'fa-home']);
-        DB::table('admin_menu')->where('title', 'Admin')->update(['title' => '技术运维', 'order' => 99]);
-        DB::table('admin_roles')->where('id', 1)->update(['name' => '管理员']);
+        DB::table('admin_menu')
+            ->where('title', 'Dashboard')
+            ->update(['title' => '欢迎', 'icon' => 'fa-home']);
+
+        DB::table('admin_menu')
+            ->where('title', 'Admin')
+            ->update(['title' => '技术运维', 'order' => 99]);
+
+        DB::table('admin_roles')
+            ->where('id', 1)
+            ->update(['name' => '管理员']);
+
+        $renamed = [
+            'All permission'  => '全部权限',
+            'Dashboard'       => '欢迎页',
+            'Login'           => '登录登出',
+            'Auth management' => '技术运维',
+            'User setting'    => '个人设置',
+        ];
+
+        foreach ($renamed as $old => $new) {
+            DB::table('admin_permissions')
+                ->where(['name' => $old])
+                ->update(['name' => $new]);
+        }
     }
 
     /**
