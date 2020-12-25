@@ -27,7 +27,7 @@ class UserController extends BaseUserController
 
         if ($form->isCreating()) {
             $form->select('golden_uid', '高灯账号')
-                ->options($goldenUsers->pluck('name', 'id'))
+                ->options(\Arr::pluck($goldenUsers, 'fullname', 'id'))
                 ->rules('required');
             $form->hidden('name');
             $form->hidden('username');
@@ -88,13 +88,17 @@ class UserController extends BaseUserController
     {
         $goldenUsers = GoldenPassport::allUsers();
 
-        $goldenUsers = collect($goldenUsers)->keyBy('id');
-
         $bindedThirdUids = AdminUserThirdPfBind::getBindUids(self::GOLDEN_PLATFORM);
 
-        // 去除已绑定的第三方账号
-        foreach ($bindedThirdUids as $thirdUid) {
-            unset($goldenUsers[$thirdUid]);
+        foreach ($goldenUsers as $key => &$goldenUser) {
+
+            if (in_array($goldenUser['id'], $bindedThirdUids)) {
+                unset($goldenUsers[$key]);
+            }
+
+            else {
+                $goldenUser['fullname'] = $goldenUser['name'] . '（' . $goldenUser['username'] . '）';
+            }
         }
 
         return $goldenUsers;
