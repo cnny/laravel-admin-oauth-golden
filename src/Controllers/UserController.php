@@ -90,17 +90,19 @@ class UserController extends BaseUserController
 
         $bindedThirdUids = AdminUserThirdPfBind::getBindUids(self::GOLDEN_PLATFORM);
 
-        foreach ($goldenUsers as $key => &$goldenUser) {
+        $return = [];
 
-            if (in_array($goldenUser['id'], $bindedThirdUids)) {
-                unset($goldenUsers[$key]);
-            }
+        foreach ($goldenUsers as $key => $goldenUser) {
 
-            else {
+            if (! in_array($goldenUser['id'], $bindedThirdUids)) {
+
+                // 员工名追加英文名
                 $goldenUser['fullname'] = $goldenUser['name'] . '（' . $goldenUser['username'] . '）';
+
+                $return[$goldenUser['id']] = $goldenUser;
             }
         }
 
-        return $goldenUsers;
+        return $return;
     }
 }
