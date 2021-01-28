@@ -288,21 +288,8 @@ code {
   color: #666;
 }
 
-.btn-success, .btn-warning, .btn-info, .btn-danger, .btn-primary {
-  color: #FFF !important;
-  border-color: #168f48 !important;
-}
-
 .btn-success,.nav-tabs-custom>.nav-tabs>li.active,.box.box-success,.box.box-primary,.box.box-info,.btn-info {
   border-color: #168f48;
-}
-
-.btn-warning {
-  border-color: #168f48 !important;
-}
-
-.btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
-  border-color: #168f48 !important;
 }
 
 .sidebar-menu>li {
