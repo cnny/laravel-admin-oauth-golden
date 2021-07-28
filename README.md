@@ -1,4 +1,4 @@
-# Laravel-Admin 接入「高灯创新」通行证
+# Laravel-Admin 接入「高灯科技·数据中台」通行证
 
 ### 安装
 
@@ -9,7 +9,7 @@ composer require cann/laravel-admin-oauth-golden:dev-master
 ### 发布资源
 
 ```
-php artisan vendor:publish --provider="Cann\Admin\OAuth\AdminOAuthServiceProvider"
+php artisan vendor:publish --force --provider="Cann\Admin\OAuth\AdminOAuthServiceProvider"
 ```
 
 ### 数据库迁移
