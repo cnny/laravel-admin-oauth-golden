@@ -229,7 +229,7 @@ a {
 
 .pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover, .pagination .active span, .pagination .active span:hover, .pagination .active span:hover:focus {
   background: #168f48;
-  color: #fff;
+  color: #fff !important;
   border-color: #168f48;
 }
 
@@ -288,8 +288,22 @@ code {
   color: #666;
 }
 
+.btn-success, .btn-warning, .btn-info, .btn-danger, .btn-primary {
+  color: #FFF !important;
+}
+
 .btn-success,.nav-tabs-custom>.nav-tabs>li.active,.box.box-success,.box.box-primary,.box.box-info,.btn-info {
   border-color: #168f48;
+}
+
+.btn-orange {
+  color: #FFF !important;;
+  border-color: #f39c12 !important;
+  background-color: #f39c12 !important;
+}
+
+.open>.dropdown-toggle.btn-info {
+  border-color: #168f48 !important;
 }
 
 .sidebar-menu>li {
@@ -470,10 +484,6 @@ code {
   color: rgba(35,46,58,1);
 }
 
-.btn-info.focus, .btn-info:focus, .btn-info:hover, .btn-success:hover, .btn-success:focus {
-  border-color: #168f48 !important;
-}
-
 .clear {
   clear: both;
 }
@@ -508,10 +518,6 @@ ul,li {
 .box {
   border-top: 0px;
   margin-bottom: 40px;
-}
-
-.btn, .btn:active, .btn:hover, .btn:focus, .label-success {
-  background-color: #168f48 !important;
 }
 
 .btn-default, .btn-default:active, .btn-default:hover, .btn-default:focus {
@@ -551,12 +557,6 @@ ul,li {
 .menu_dish_edit .btngroups_top .right .update {
   float: left;
   margin-left: 30px;
-}
-
-.btn-default-o, .btn-default-o:active, .btn-default-o:hover, .btn-default-o:focus {
-  color: #168f48 !important;
-  background-color: transparent !important;
-  border-color: #168f48 !important;
 }
 
 .column-cart_goods {
