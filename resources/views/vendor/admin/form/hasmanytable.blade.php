@@ -9,12 +9,11 @@
           @foreach($headers as $header)
             <th>{{ $header }}</th>
           @endforeach
-
           <th class="hidden"></th>
-
           @if($options['allowDelete'])
             <th></th>
           @endif
+          <th></th>
         </tr>
         </thead>
         <tbody class="has-many-{{$column}}-forms">
@@ -42,6 +41,14 @@
                 </div>
               </td>
             @endif
+
+            <td class="form-group">
+              <div>
+                <a class="arrow-up pull-right"><i class="fa fa-arrow-up">&nbsp;</i></a>
+                <a class="arrow-down pull-right"><i class="fa fa-arrow-down">&nbsp;</i></a>
+              </div>
+            </td>
+
           </tr>
         @endforeach
         </tbody>
@@ -49,12 +56,16 @@
 
       <template class="{{$column}}-tpl">
         <tr class="has-many-{{$column}}-form fields-group">
-
           {!! $template !!}
-
           <td class="form-group">
             <div>
               <div class="remove pull-right"><i class="fa fa-close">&nbsp;</i></div>
+            </div>
+          </td>
+          <td class="form-group">
+            <div>
+              <a class="arrow-up pull-right"><i class="fa fa-arrow-up">&nbsp;</i></a>
+              <a class="arrow-down pull-right"><i class="fa fa-arrow-down">&nbsp;</i></a>
             </div>
           </td>
         </tr>

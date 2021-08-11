@@ -1,4 +1,4 @@
-@if(Admin::user()->visible($item['roles']) && Admin::user()->can($item['permission']))
+@if(Admin::user()->visible($item['roles']) && (empty($item['permission']) ?: Admin::user()->can($item['permission'])))
 
   <li class="{{ isset($item['children']) ? 'seconds' : '' }}">
 
