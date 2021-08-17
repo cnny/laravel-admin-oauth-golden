@@ -1,7 +1,7 @@
 <div class="menu_dish_edit">
   <div class="btngroups_top">
     <div class="left">
-      <button onclick="history.go(-1)" class="btn btn-sm btn-default-o">
+      <button onclick="history.go(-1)" class="btn btn-sm btn-default">
         <i class="fa fa-arrow-left">&nbsp;</i> 返 回
       </button>
     </div>
