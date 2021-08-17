@@ -4,8 +4,8 @@
     <table class="table no-padding-tbl">
       <thead>
         <tr>
-          <th style="width: 40%">{{ $titles['key'] }}</th>
-          <th style="width: 40%">{{ $titles['value'] }}</th>
+          <th style="width: 40%">{{ $titles['key'] ?? '键' }}</th>
+          <th style="width: 40%">{{ $titles['value'] ?? '值' }}</th>
           <th style="width: 75px;"></th>
         </tr>
       </thead>
