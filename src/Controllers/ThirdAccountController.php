@@ -92,7 +92,7 @@ class ThirdAccountController extends AuthController
 
         admin_toastr(trans('admin.login_successful'));
 
-        return redirect(admin_url('/'));
+        return redirect()->intended('/');
     }
 
     public function bindAccount(Request $request)
@@ -134,7 +134,7 @@ class ThirdAccountController extends AuthController
 
             admin_toastr('绑定成功');
 
-            return redirect(admin_url('/'));
+            return redirect()->intended('/');
         }
     }
 }
