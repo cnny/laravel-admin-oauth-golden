@@ -34,7 +34,7 @@ class InstallCommand extends Command
     protected function replaceInFile($path, array $replaces)
     {
         $old = file_get_contents($path);
-        $new = str_replace(array_key($replaces), array_values($replaces), $old);
+        $new = str_replace(array_keys($replaces), array_values($replaces), $old);
 
         file_put_contents($path, $new);
     }
