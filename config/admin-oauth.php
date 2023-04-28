@@ -13,4 +13,10 @@ return [
         ],
     ],
 
+    'controllers' => [
+        'user'       => \Cann\Admin\OAuth\Controllers\UserController::class,
+        'role'       => \Cann\Admin\OAuth\Controllers\RoleController::class,
+        'permission' => \Cann\Admin\OAuth\Controllers\PermissionController::class,
+        'auth'       => \Cann\Admin\OAuth\Controllers\ThirdAccountController::class,
+    ],
 ];
