@@ -3,7 +3,6 @@
 namespace Cann\Admin\OAuth;
 
 use Illuminate\Support\ServiceProvider;
-use Cann\Admin\OAuth\Commands\SyncBindRelationFromPassport;
 
 class AdminOAuthServiceProvider extends ServiceProvider
 {
@@ -25,7 +24,10 @@ class AdminOAuthServiceProvider extends ServiceProvider
             $this->publishes([__DIR__.'/../public' => public_path()], 'admin-oauth');
             $this->publishes([__DIR__.'/../resources/views' => resource_path('views')], 'admin-oauth');
 
-            $this->commands([SyncBindRelationFromPassport::class]);
+            $this->commands([
+                Console\Commands\InstallCommand::class,
+                Console\Commands\SyncBindRelationFromPassport::class,
+            ]);
         }
 
         $this->app->booted(function () {

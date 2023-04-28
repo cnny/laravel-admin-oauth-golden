@@ -1,5 +1,6 @@
 <?php
-namespace Cann\Admin\OAuth\Commands;
+
+namespace Cann\Admin\OAuth\Console\Commands;
 
 use Illuminate\Console\Command;
 use Cann\Admin\OAuth\Services\GoldenPassport;
