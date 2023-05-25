@@ -14,7 +14,7 @@
       @endforeach
     @endif
 
-    <table class="table no-padding-tbl">
+    <table class="table no-padding-tbl" id="listfields-{{$column}}-table">
 
       <tbody class="list-{{$column}}-table">
 
@@ -35,10 +35,15 @@
               </div>
             </div>
           </td>
-
           <td style="width: 75px;">
             <div class="{{$column}}-remove pull-right">
               <i class="fa fa-close">&nbsp;</i>
+            </div>
+          </td>
+          <td class="form-group">
+            <div>
+              <a class="arrow-up pull-right"><i class="fa fa-arrow-up">&nbsp;</i></a>
+              <a class="arrow-down pull-right"><i class="fa fa-arrow-down">&nbsp;</i></a>
             </div>
           </td>
         </tr>
@@ -55,21 +60,26 @@
       </tfoot>
     </table>
   </div>
-</div>
-
-<template class="{{$column}}-tpl">
-  <tr>
-    <td>
-      <div class="form-group">
-        <div class="col-sm-12">
-          <input name="{{ $column }}[values][]" class="form-control" />
+  <template class="{{$column}}-tpl">
+    <tr>
+      <td>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input name="{{ $column }}[values][]" class="form-control" />
+          </div>
         </div>
-      </div>
-    </td>
-    <td style="width: 75px;">
-      <div class="{{$column}}-remove pull-right">
-        <i class="fa fa-close">&nbsp;</i>
-      </div>
-    </td>
-  </tr>
-</template>
+      </td>
+      <td style="width: 75px;">
+        <div class="{{$column}}-remove pull-right">
+          <i class="fa fa-close">&nbsp;</i>
+        </div>
+      </td>
+      <td class="form-group">
+        <div>
+          <a class="arrow-up pull-right"><i class="fa fa-arrow-up">&nbsp;</i></a>
+          <a class="arrow-down pull-right"><i class="fa fa-arrow-down">&nbsp;</i></a>
+        </div>
+      </td>
+    </tr>
+  </template>
+</div>
